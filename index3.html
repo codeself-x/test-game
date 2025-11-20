@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shooting Target Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+        }
+        #gameContainer {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        canvas {
+            border: 3px solid #fff;
+            border-radius: 10px;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
+            cursor: crosshair;
+            display: block;
+            margin: 0 auto;
+        }
+        #info {
+            color: white;
+            margin-top: 15px;
+            font-size: 18px;
+        }
+        #score, #timer, #ammo {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="info">
+            <span id="score">คะแนน: 0</span>
+            <span id="timer">เวลา: 60s</span>
+            <span id="ammo">กระสุน: ∞</span>
+        </div>
+    </div>
+    <script src="game3.js"></script>
+</body>
+</html>

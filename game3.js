@@ -14,13 +14,19 @@ let animationId;
 let targets = [];
 const TARGET_COUNT = 4;
 
-// Target images (คุณสามารถเปลี่ยน path ตามไฟล์รูปของคุณ)
-const targetImages = [
-    './user.png',  // เป้า 1
-    './user2.png',   // เป้า 2
-    './user3.png',   // เป้า 2
-    './user4.png'   // เป้า 2
+// Target data with names and images
+const targetData = [
+    { name: 'เสี่ยปู', image: './user.png', color: '#FF6B6B' },
+    { name: 'เสี่ยจิ', image: './user2.png', color: '#4ECDC4' },
+    { name: 'เสี่ยก้อง', image: './user3.png', color: '#FFD93D' },
+    { name: 'ตั้ม ราบ 11', image: './user4.png', color: '#af95e1' }
 ];
+
+// Score tracking per target name
+let targetScores = {};
+targetData.forEach(target => {
+    targetScores[target.name] = 0;
+});
 
 // Bullet effects
 let bulletEffects = [];
@@ -43,8 +49,11 @@ class Target {
         this.y = Math.random() * (canvas.height - this.height);
         this.speedX = (Math.random() - 0.5) * 4;
         this.speedY = (Math.random() - 0.5) * 4;
+        const data = targetData[id % targetData.length];
+        this.name = data.name;
+        this.color = data.color;
         this.image = new Image();
-        this.image.src = targetImages[id % targetImages.length];
+        this.image.src = data.image;
         this.visible = true;
         this.hitAnimation = 0;
     }
@@ -71,6 +80,15 @@ class Target {
         if (!this.visible) return;
 
         ctx.save();
+
+        // Draw name label above target
+        ctx.fillStyle = this.color;
+        ctx.font = 'bold 16px Arial';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        ctx.shadowBlur = 4;
+        ctx.fillText(this.name, this.x + this.width / 2, this.y - 10);
+        ctx.shadowBlur = 0;
 
         // Hit animation
         if (this.hitAnimation > 0) {
@@ -136,6 +154,9 @@ class Target {
     onHit() {
         this.visible = false;
         createExplosion(this.x + this.width / 2, this.y + this.height / 2);
+        
+        // Update score for this target name
+        targetScores[this.name]++;
         
         // Respawn after delay
         setTimeout(() => {
@@ -269,10 +290,15 @@ function startGame() {
     gameRunning = true;
     gameOver = false;
     score = 0;
-    timeLeft = 60;
+    timeLeft = 15;
     targets = [];
     bulletEffects = [];
     clickEffects = [];
+    
+    // Reset target scores
+    Object.keys(targetScores).forEach(key => {
+        targetScores[key] = 0;
+    });
     
     // Create targets
     for (let i = 0; i < TARGET_COUNT; i++) {
@@ -309,23 +335,100 @@ function drawStartScreen() {
     ctx.fillText('คลิกเพื่อเริ่มเกม', canvas.width / 2, canvas.height / 2 + 100);
 }
 
+// Draw scoreboard
+function drawScoreboard() {
+    const boardX = canvas.width - 200;
+    const boardY = 10;
+    const boardWidth = 190;
+    const rowHeight = 35;
+    const headerHeight = 40;
+    
+    // Background
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillRect(boardX, boardY, boardWidth, headerHeight + (Object.keys(targetScores).length * rowHeight) + 10);
+    
+    // Border
+    ctx.strokeStyle = '#FFD700';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(boardX, boardY, boardWidth, headerHeight + (Object.keys(targetScores).length * rowHeight) + 10);
+    
+    // Header
+    ctx.fillStyle = '#FFD700';
+    ctx.font = 'bold 18px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('🏆 สถิติหมั่นไส้', boardX + boardWidth / 2, boardY + 25);
+    
+    // Scores
+    let yPos = boardY + headerHeight + 5;
+    const sortedScores = Object.entries(targetScores).sort((a, b) => b[1] - a[1]);
+    
+    sortedScores.forEach(([name, count], index) => {
+        const targetInfo = targetData.find(t => t.name === name);
+        
+        // Background for each row
+        if (index % 2 === 0) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.fillRect(boardX + 5, yPos - 20, boardWidth - 10, rowHeight - 5);
+        }
+        
+        // Name
+        ctx.fillStyle = targetInfo.color;
+        ctx.font = 'bold 16px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText(name, boardX + 15, yPos);
+        
+        // Score
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'right';
+        ctx.fillText(`${count} ครั้ง`, boardX + boardWidth - 15, yPos);
+        
+        yPos += rowHeight;
+    });
+}
+
 // Draw game over screen
 function drawGameOver() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 50px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('เกมจบแล้ว!', canvas.width / 2, canvas.height / 2 - 60);
+    ctx.fillText('เกมจบแล้ว!', canvas.width / 2, 100);
     
     ctx.font = '36px Arial';
     ctx.fillStyle = '#FFD700';
-    ctx.fillText(`คะแนนสุดท้าย: ${score}`, canvas.width / 2, canvas.height / 2 + 10);
+    ctx.fillText(`คะแนนรวม: ${score}`, canvas.width / 2, 160);
+    
+    // Detailed scoreboard
+    const startY = 220;
+    ctx.font = 'bold 24px Arial';
+    ctx.fillStyle = '#fff';
+    ctx.fillText('📊 สรุปความหมั่นไส้', canvas.width / 2, startY);
+    
+    const sortedScores = Object.entries(targetScores).sort((a, b) => b[1] - a[1]);
+    let yPos = startY + 50;
+    
+    sortedScores.forEach(([name, count], index) => {
+        const targetInfo = targetData.find(t => t.name === name);
+        const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '  ';
+        
+        ctx.font = 'bold 20px Arial';
+        ctx.fillStyle = targetInfo.color;
+        ctx.textAlign = 'left';
+        ctx.fillText(`${medal} ${name}`, canvas.width / 2 - 150, yPos);
+        
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'right';
+        ctx.fillText(`${count} ครั้ง (${count * 10} คะแนน)`, canvas.width / 2 + 150, yPos);
+        
+        yPos += 40;
+    });
     
     ctx.font = '20px Arial';
-    ctx.fillStyle = '#fff';
-    ctx.fillText('คลิกเพื่อเล่นอีกครั้ง', canvas.width / 2, canvas.height / 2 + 80);
+    ctx.fillStyle = '#FFD700';
+    ctx.textAlign = 'center';
+    ctx.fillText('คลิกเพื่อเล่นอีกครั้ง', canvas.width / 2, canvas.height - 40);
 }
 
 // Main game loop
@@ -377,6 +480,9 @@ function gameLoop(currentTime) {
             effect.draw();
             return alive;
         });
+
+        // Draw scoreboard
+        drawScoreboard();
 
         // Continue loop
         animationId = requestAnimationFrame(gameLoop);

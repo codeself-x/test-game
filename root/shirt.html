@@ -460,8 +460,9 @@ let stream = null;
 async function startCamera() {
   try {
     stream = await navigator.mediaDevices.getUserMedia({
-      //video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } }
-      video: { facingMode: { exact: 'user' }, width: { ideal: 720 }, height: { ideal: 960 } }
+      // video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } }
+      // video: { facingMode: { exact: 'user' }, width: { ideal: 720 }, height: { ideal: 960 } }
+      video: { facingMode: 'user' }
     });
     const video = document.getElementById('video');
     video.srcObject = stream;

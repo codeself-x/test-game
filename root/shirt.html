@@ -6,20 +6,12 @@
 <title>เช็คดวงเสื้อ 2569 🔮</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700;800&display=swap');
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --pink: #ff6b9d;
-    --yellow: #ffd93d;
-    --purple: #a855f7;
-    --orange: #ff8c42;
-    --bg: #fff8e7;
-  }
+  :root { --pink: #ff6b9d; --yellow: #ffd93d; --purple: #a855f7; --orange: #ff8c42; }
 
   body {
     font-family: 'Sarabun', sans-serif;
-    background: var(--bg);
+    background: #fff8e7;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -30,310 +22,152 @@
   }
 
   h1 {
-    font-size: 2rem;
-    font-weight: 800;
-    text-align: center;
+    font-size: 2rem; font-weight: 800; text-align: center;
     background: linear-gradient(135deg, var(--orange), var(--pink), var(--purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     margin-bottom: 4px;
-    filter: drop-shadow(0 2px 4px rgba(255,107,157,0.3));
   }
+  .subtitle { font-size: 1rem; color: #888; margin-bottom: 20px; text-align: center; }
 
-  .subtitle {
-    font-size: 1rem;
-    color: #888;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-
-  .day-selector {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-
+  .day-selector { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
   .day-btn {
-    padding: 8px 16px;
-    border-radius: 999px;
-    border: 2px solid #ddd;
-    background: white;
-    font-family: 'Sarabun', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #555;
+    padding: 8px 16px; border-radius: 999px; border: 2px solid #ddd;
+    background: white; font-family: 'Sarabun', sans-serif; font-size: 0.95rem;
+    font-weight: 700; cursor: pointer; transition: all 0.2s; color: #555;
+  }
+  .day-btn.active {
+    background: var(--pink); border-color: var(--pink); color: white;
+    transform: scale(1.05); box-shadow: 0 4px 12px rgba(255,107,157,0.4);
   }
 
-  .day-btn.active {
-    background: var(--pink);
-    border-color: var(--pink);
-    color: white;
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(255,107,157,0.4);
+  /* ===== CAMERA WRAPPER ===== */
+  .camera-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
   }
 
   .camera-container {
     position: relative;
     width: 100%;
-    max-width: 380px;
     border-radius: 24px;
+    overflow: hidden;
     box-shadow: 0 8px 32px rgba(0,0,0,0.15);
     background: #222;
     aspect-ratio: 3/4;
   }
 
-  #video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    border-radius: 24px;
-  }
-
+  #video { width: 100%; height: 100%; object-fit: cover; display: block; }
   #canvas { display: none; }
-
-  .scan-overlay {
-    position: absolute;
-    inset: 0;
-  }
-
-  .scan-box, .scan-label {
-    pointer-events: none;
-  }
 
   .scan-box {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 120px;
-    height: 120px;
+    width: 120px; height: 120px;
     border: 3px dashed rgba(255,255,255,0.7);
     border-radius: 16px;
+    pointer-events: none;
     animation: pulse 1.5s ease-in-out infinite;
   }
-
   @keyframes pulse {
-    0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+    0%,100% { opacity:0.7; transform:translate(-50%,-50%) scale(1); }
+    50%      { opacity:1;   transform:translate(-50%,-50%) scale(1.05); }
   }
 
   .scan-label {
-    position: absolute;
-    bottom: 96px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.6);
-    color: white;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    white-space: nowrap;
+    position: absolute; bottom: 96px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.6); color: white;
+    padding: 6px 14px; border-radius: 999px; font-size: 0.8rem;
+    white-space: nowrap; pointer-events: none;
   }
 
   .capture-btn {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    border: 4px solid white;
-    background: white;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-    transition: transform 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.6rem;
-    pointer-events: all;
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    width: 64px; height: 64px; border-radius: 50%;
+    border: 4px solid white; background: white; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3); transition: transform 0.1s;
+    display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
   }
-
   .capture-btn:active { transform: translateX(-50%) scale(0.9); }
 
-  /* ปุ่มสลับกล้อง */
+  /* ปุ่มสลับกล้อง — อยู่นอก camera-container แต่ใน camera-wrap */
   .switch-btn {
     position: absolute;
     top: 14px;
     right: 14px;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.6);
-    background: rgba(0,0,0,0.6);
+    border: 2px solid rgba(255,255,255,0.8);
+    background: rgba(0,0,0,0.65);
     color: white;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(4px);
-    z-index: 99;
-    transition: background 0.2s, transform 0.2s;
+    z-index: 10;
+    transition: transform 0.3s, background 0.2s;
   }
-  .switch-btn:active { background: rgba(0,0,0,0.8); transform: scale(0.9); }
+  .switch-btn:active { background: rgba(0,0,0,0.9); transform: rotate(180deg); }
+
+  .loading {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+    color: white; font-size: 1rem; font-weight: 700; border-radius: 22px;
+  }
+  .spinner {
+    width: 40px; height: 40px;
+    border: 4px solid rgba(255,255,255,0.3); border-top-color: white;
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   .start-btn {
     padding: 14px 32px;
     background: linear-gradient(135deg, var(--pink), var(--purple));
-    color: white;
-    border: none;
-    border-radius: 999px;
-    font-family: 'Sarabun', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(168,85,247,0.4);
-    transition: transform 0.2s;
-    margin-top: 12px;
+    color: white; border: none; border-radius: 999px;
+    font-family: 'Sarabun', sans-serif; font-size: 1.1rem; font-weight: 700;
+    cursor: pointer; box-shadow: 0 4px 20px rgba(168,85,247,0.4);
+    transition: transform 0.2s; margin-top: 12px;
   }
-
   .start-btn:hover { transform: scale(1.04); }
 
+  #camera-placeholder {
+    width: 100%; max-width: 380px; aspect-ratio: 3/4;
+    background: linear-gradient(135deg, #f8e1f4, #fff0c0);
+    border-radius: 24px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+    border: 3px dashed #f0a0c0; font-size: 5rem;
+  }
+
   #result-panel {
-    display: none;
-    width: 100%;
-    max-width: 380px;
-    margin-top: 16px;
-    border-radius: 24px;
-    padding: 20px;
-    text-align: center;
+    display: none; width: 100%; max-width: 380px;
+    margin-top: 16px; border-radius: 24px; padding: 20px; text-align: center;
     animation: slideUp 0.4s ease;
   }
+  @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  #result-panel.lucky   { background: linear-gradient(135deg,#fff9c4,#fffde7); border: 3px solid var(--yellow); box-shadow: 0 8px 32px rgba(255,217,61,0.3); }
+  #result-panel.unlucky { background: linear-gradient(135deg,#fce4ec,#fff);    border: 3px solid #ef5350;       box-shadow: 0 8px 32px rgba(239,83,80,0.2); }
+  #result-panel.neutral { background: linear-gradient(135deg,#e8f5e9,#fff);    border: 3px solid #66bb6a;       box-shadow: 0 8px 32px rgba(102,187,106,0.2); }
 
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  #result-panel.lucky {
-    background: linear-gradient(135deg, #fff9c4, #fffde7);
-    border: 3px solid var(--yellow);
-    box-shadow: 0 8px 32px rgba(255,217,61,0.3);
-  }
-
-  #result-panel.unlucky {
-    background: linear-gradient(135deg, #fce4ec, #fff);
-    border: 3px solid #ef5350;
-    box-shadow: 0 8px 32px rgba(239,83,80,0.2);
-  }
-
-  #result-panel.neutral {
-    background: linear-gradient(135deg, #e8f5e9, #fff);
-    border: 3px solid #66bb6a;
-    box-shadow: 0 8px 32px rgba(102,187,106,0.2);
-  }
-
-  .color-swatch {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin: 0 auto 12px;
-    border: 4px solid white;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  }
-
-  .result-emoji { font-size: 2.5rem; display: block; margin-bottom: 6px; }
-
-  .result-title {
-    font-size: 1.5rem;
-    font-weight: 800;
-    margin-bottom: 6px;
-  }
-
-  .result-desc {
-    font-size: 0.95rem;
-    color: #555;
-    line-height: 1.5;
-    margin-bottom: 12px;
-  }
-
-  .color-name-th {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 4px;
-  }
-
-  .categories {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: center;
-    margin-top: 8px;
-  }
-
-  .cat-tag {
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 700;
-  }
-
-  .cat-tag.good { background: #e8f5e9; color: #2e7d32; border: 1.5px solid #a5d6a7; }
-  .cat-tag.bad  { background: #ffebee; color: #c62828; border: 1.5px solid #ef9a9a; }
-
+  .color-swatch { width:80px; height:80px; border-radius:50%; margin:0 auto 12px; border:4px solid white; box-shadow:0 4px 16px rgba(0,0,0,0.15); }
+  .result-emoji { font-size:2.5rem; display:block; margin-bottom:6px; }
+  .result-title { font-size:1.5rem; font-weight:800; margin-bottom:6px; }
+  .result-desc  { font-size:0.95rem; color:#555; line-height:1.5; margin-bottom:12px; }
+  .color-name-th { font-size:1.1rem; font-weight:700; color:#333; margin-bottom:4px; }
+  .categories { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin-top:8px; }
+  .cat-tag { padding:4px 12px; border-radius:999px; font-size:0.8rem; font-weight:700; }
+  .cat-tag.good { background:#e8f5e9; color:#2e7d32; border:1.5px solid #a5d6a7; }
+  .cat-tag.bad  { background:#ffebee; color:#c62828; border:1.5px solid #ef9a9a; }
   .retry-btn {
-    margin-top: 14px;
-    padding: 10px 24px;
-    background: #f0f0f0;
-    border: none;
-    border-radius: 999px;
-    font-family: 'Sarabun', sans-serif;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: background 0.2s;
-    font-weight: 700;
-    color: #555;
+    margin-top:14px; padding:10px 24px; background:#f0f0f0; border:none;
+    border-radius:999px; font-family:'Sarabun',sans-serif; font-size:0.95rem;
+    cursor:pointer; transition:background 0.2s; font-weight:700; color:#555;
   }
-  .retry-btn:hover { background: #e0e0e0; }
-
-  #camera-placeholder {
-    width: 100%;
-    max-width: 380px;
-    aspect-ratio: 3/4;
-    background: linear-gradient(135deg, #f8e1f4, #fff0c0);
-    border-radius: 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    border: 3px dashed #f0a0c0;
-    font-size: 5rem;
-  }
-
-  .loading {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    color: white;
-    font-size: 1rem;
-    font-weight: 700;
-    border-radius: 22px;
-  }
-
-  .spinner {
-    width: 40px; height: 40px;
-    border: 4px solid rgba(255,255,255,0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .retry-btn:hover { background:#e0e0e0; }
 </style>
 </head>
 <body>
@@ -348,19 +182,21 @@
   <button class="start-btn" onclick="startCamera()">📷 เปิดกล้องสแกนเสื้อ</button>
 </div>
 
-<div class="camera-container" id="cameraContainer" style="display:none">
-  <video id="video" autoplay playsinline></video>
-  <canvas id="canvas"></canvas>
-  <div class="scan-overlay">
+<!-- camera-wrap ครอบทั้ง container + ปุ่มสลับ -->
+<div class="camera-wrap" id="cameraWrap" style="display:none">
+  <div class="camera-container" id="cameraContainer">
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas"></canvas>
     <div class="scan-box"></div>
     <div class="scan-label">👕 ชี้กล้องที่เสื้อในกรอบ</div>
+    <button class="capture-btn" onclick="captureAndAnalyze()">📸</button>
+    <div id="loading" class="loading" style="display:none">
+      <div class="spinner"></div>
+      <div>กำลังดูดวง...</div>
+    </div>
   </div>
+  <!-- ปุ่มสลับอยู่ใน wrap แต่นอก container ที่มี overflow:hidden -->
   <button class="switch-btn" onclick="switchCamera()" title="สลับกล้อง">🔄</button>
-  <button class="capture-btn" onclick="captureAndAnalyze()" title="ถ่ายภาพ">📸</button>
-  <div id="loading" class="loading" style="display:none">
-    <div class="spinner"></div>
-    <div>กำลังดูดวง...</div>
-  </div>
 </div>
 
 <div id="result-panel">
@@ -375,239 +211,152 @@
 
 <script>
 const DAYS = [
-  { th: 'จันทร์', short: 'จ', jsDay: 1 },
-  { th: 'อังคาร', short: 'อ', jsDay: 2 },
-  { th: 'พุธ', short: 'พ', jsDay: 3 },
-  { th: 'พฤหัสฯ', short: 'พฤ', jsDay: 4 },
-  { th: 'ศุกร์', short: 'ศ', jsDay: 5 },
-  { th: 'เสาร์', short: 'ส', jsDay: 6 },
-  { th: 'อาทิตย์', short: 'อา', jsDay: 0 },
+  { th:'จันทร์', short:'จ',  jsDay:1 },
+  { th:'อังคาร', short:'อ',  jsDay:2 },
+  { th:'พุธ',    short:'พ',  jsDay:3 },
+  { th:'พฤหัสฯ', short:'พฤ', jsDay:4 },
+  { th:'ศุกร์',  short:'ศ',  jsDay:5 },
+  { th:'เสาร์',  short:'ส',  jsDay:6 },
+  { th:'อาทิตย์',short:'อา', jsDay:0 },
 ];
-
-const CATEGORIES = ['การงาน', 'การเงิน', 'ความรัก', 'ผู้ใหญ่เมตตา', 'กาลกิณี'];
-
+const CATEGORIES = ['การงาน','การเงิน','ความรัก','ผู้ใหญ่เมตตา','กาลกิณี'];
 const C = {
-  red:       { rgb: [220,50,50],   th: 'แดง' },
-  orange:    { rgb: [230,120,50],  th: 'ส้ม' },
-  yellow:    { rgb: [240,210,50],  th: 'เหลือง' },
-  green:     { rgb: [50,160,90],   th: 'เขียว' },
-  teal:      { rgb: [30,170,160],  th: 'เขียวมรกต' },
-  blue:      { rgb: [60,120,220],  th: 'น้ำเงิน' },
-  lightblue: { rgb: [100,190,230], th: 'ฟ้า' },
-  purple:    { rgb: [140,70,200],  th: 'ม่วง' },
-  pink:      { rgb: [240,140,190], th: 'ชมพู' },
-  brown:     { rgb: [130,80,40],   th: 'น้ำตาล' },
-  black:     { rgb: [30,30,30],    th: 'ดำ' },
-  white:     { rgb: [240,240,240], th: 'ขาว' },
-  gray:      { rgb: [160,160,170], th: 'เทา' },
-  cream:     { rgb: [255,240,200], th: 'ครีม' },
+  red:      {rgb:[220,50,50],  th:'แดง'},   orange:   {rgb:[230,120,50], th:'ส้ม'},
+  yellow:   {rgb:[240,210,50], th:'เหลือง'},green:    {rgb:[50,160,90],  th:'เขียว'},
+  teal:     {rgb:[30,170,160], th:'เขียวมรกต'}, blue: {rgb:[60,120,220], th:'น้ำเงิน'},
+  lightblue:{rgb:[100,190,230],th:'ฟ้า'},   purple:   {rgb:[140,70,200], th:'ม่วง'},
+  pink:     {rgb:[240,140,190],th:'ชมพู'},  brown:    {rgb:[130,80,40],  th:'น้ำตาล'},
+  black:    {rgb:[30,30,30],   th:'ดำ'},    white:    {rgb:[240,240,240],th:'ขาว'},
+  gray:     {rgb:[160,160,170],th:'เทา'},   cream:    {rgb:[255,240,200],th:'ครีม'},
 };
-
 const TABLE = {
-  0: { 0: ['red','brown'],       1: ['purple','black'], 2: ['green','green'],      3: ['lightblue','lightblue'], 4: ['red'] },
-  1: { 0: ['purple'],            1: ['orange','brown'], 2: ['purple','black'],     3: ['red','red'],             4: ['yellow','gray'] },
-  2: { 0: ['lightblue','blue'],  1: ['purple'],         2: ['red','orange'],       3: ['brown','pink'],          4: ['gray'] },
-  3: { 0: ['yellow'],            1: ['red'],            2: ['lightblue','teal'],   3: ['teal','teal'],           4: ['black'] },
-  4: { 0: ['teal','pink'],       1: ['pink'],           2: ['yellow','gray'],      3: ['orange','orange'],       4: ['purple'] },
-  5: { 0: ['red','lightblue'],   1: ['lightblue','blue'], 2: ['purple'],           3: ['purple'],                4: ['green'] },
-  6: { 0: ['purple','black'],    1: ['teal'],           2: ['purple'],             3: ['purple','purple'],       4: ['lightblue','blue'] },
+  0:{0:['red','brown'],      1:['purple','black'],  2:['green','green'],    3:['lightblue','lightblue'],4:['red']},
+  1:{0:['purple'],           1:['orange','brown'],  2:['purple','black'],   3:['red','red'],            4:['yellow','gray']},
+  2:{0:['lightblue','blue'], 1:['purple'],          2:['red','orange'],     3:['brown','pink'],         4:['gray']},
+  3:{0:['yellow'],           1:['red'],             2:['lightblue','teal'], 3:['teal','teal'],          4:['black']},
+  4:{0:['teal','pink'],      1:['pink'],            2:['yellow','gray'],    3:['orange','orange'],      4:['purple']},
+  5:{0:['red','lightblue'],  1:['lightblue','blue'],2:['purple'],           3:['purple'],               4:['green']},
+  6:{0:['purple','black'],   1:['teal'],            2:['purple'],           3:['purple','purple'],      4:['lightblue','blue']},
 };
 
-function getAllColors(dayIdx) {
-  const row = TABLE[dayIdx];
-  const lucky = new Set(), unlucky = new Set();
-  for (let col = 0; col < 5; col++) {
-    (row[col] || []).forEach(c => col === 4 ? unlucky.add(c) : lucky.add(c));
-  }
-  return { lucky, unlucky };
+function getAllColors(i){
+  const row=TABLE[i], lucky=new Set(), unlucky=new Set();
+  for(let c=0;c<5;c++) (row[c]||[]).forEach(x=>c===4?unlucky.add(x):lucky.add(x));
+  return {lucky,unlucky};
 }
-
-function getLuckyCategories(dayIdx, colorKey) {
-  const row = TABLE[dayIdx];
-  const cats = [];
-  for (let col = 0; col < 4; col++) {
-    if ((row[col] || []).includes(colorKey)) cats.push(CATEGORIES[col]);
-  }
+function getLuckyCategories(i,k){
+  const row=TABLE[i],cats=[];
+  for(let c=0;c<4;c++) if((row[c]||[]).includes(k)) cats.push(CATEGORIES[c]);
   return cats;
 }
 
-// ===== DAY SELECTOR =====
 let selectedDay = new Date().getDay();
-
-function buildDaySelector() {
-  const container = document.getElementById('daySelector');
-  DAYS.forEach(d => {
-    const btn = document.createElement('button');
-    btn.className = 'day-btn' + (d.jsDay === selectedDay ? ' active' : '');
-    btn.textContent = d.short;
-    btn.title = d.th;
-    btn.onclick = () => {
-      selectedDay = d.jsDay;
-      document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+function buildDaySelector(){
+  const el=document.getElementById('daySelector');
+  DAYS.forEach(d=>{
+    const btn=document.createElement('button');
+    btn.className='day-btn'+(d.jsDay===selectedDay?' active':'');
+    btn.textContent=d.short; btn.title=d.th;
+    btn.onclick=()=>{
+      selectedDay=d.jsDay;
+      document.querySelectorAll('.day-btn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
     };
-    container.appendChild(btn);
+    el.appendChild(btn);
   });
 }
 buildDaySelector();
 
-// ===== CAMERA =====
-let stream = null;
-let currentFacing = 'user';
+let stream=null, currentFacing='user';
 
-async function startCamera(facing) {
-  if (facing) currentFacing = facing;
-  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-
-  const constraints = [
-    { video: { facingMode: { exact: currentFacing } } },
-    { video: { facingMode: currentFacing } },
-    { video: true },
+async function startCamera(facing){
+  if(facing) currentFacing=facing;
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+  const tries=[
+    {video:{facingMode:{exact:currentFacing}}},
+    {video:{facingMode:currentFacing}},
+    {video:true}
   ];
-
-  for (const c of constraints) {
-    try {
-      stream = await navigator.mediaDevices.getUserMedia(c);
-      break;
-    } catch (e) { /* try next */ }
+  for(const c of tries){
+    try{stream=await navigator.mediaDevices.getUserMedia(c);break;}catch(e){}
   }
-
-  if (!stream) {
-    alert('ไม่สามารถเปิดกล้องได้ 😢');
-    return;
-  }
-
-  const video = document.getElementById('video');
-  video.srcObject = stream;
-  document.getElementById('camera-placeholder').style.display = 'none';
-  document.getElementById('cameraContainer').style.display = 'block';
-  document.getElementById('result-panel').style.display = 'none';
+  if(!stream){alert('ไม่สามารถเปิดกล้องได้ 😢');return;}
+  document.getElementById('video').srcObject=stream;
+  document.getElementById('camera-placeholder').style.display='none';
+  document.getElementById('cameraWrap').style.display='block';
+  document.getElementById('result-panel').style.display='none';
 }
 
-async function switchCamera() {
-  currentFacing = currentFacing === 'user' ? 'environment' : 'user';
-  const btn = document.querySelector('.switch-btn');
-  btn.style.transform = 'rotate(180deg)';
-  setTimeout(() => btn.style.transform = '', 300);
+async function switchCamera(){
+  currentFacing=currentFacing==='user'?'environment':'user';
   await startCamera(currentFacing);
 }
 
-function captureAndAnalyze() {
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  const loading = document.getElementById('loading');
-
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0);
-  loading.style.display = 'flex';
-
-  setTimeout(() => {
-    const cx = canvas.width / 2;
-    const cy = canvas.height / 2;
-    const sw = canvas.width * 0.3;
-    const sh = canvas.height * 0.3;
-    const imageData = ctx.getImageData(cx - sw/2, cy - sh/2, sw, sh);
-    const avgColor = getAverageColor(imageData);
-    loading.style.display = 'none';
-    showResult(avgColor);
-  }, 1200);
+function captureAndAnalyze(){
+  const video=document.getElementById('video');
+  const canvas=document.getElementById('canvas');
+  const loading=document.getElementById('loading');
+  canvas.width=video.videoWidth; canvas.height=video.videoHeight;
+  canvas.getContext('2d').drawImage(video,0,0);
+  loading.style.display='flex';
+  setTimeout(()=>{
+    const cx=canvas.width/2,cy=canvas.height/2;
+    const sw=canvas.width*0.3,sh=canvas.height*0.3;
+    const data=canvas.getContext('2d').getImageData(cx-sw/2,cy-sh/2,sw,sh);
+    loading.style.display='none';
+    showResult(getAvgColor(data));
+  },1200);
 }
 
-function getAverageColor(imageData) {
-  const d = imageData.data;
-  let r = 0, g = 0, b = 0, count = 0;
-  for (let i = 0; i < d.length; i += 16) {
-    r += d[i]; g += d[i+1]; b += d[i+2]; count++;
-  }
-  return [Math.round(r/count), Math.round(g/count), Math.round(b/count)];
+function getAvgColor(d){
+  const px=d.data;let r=0,g=0,b=0,n=0;
+  for(let i=0;i<px.length;i+=16){r+=px[i];g+=px[i+1];b+=px[i+2];n++;}
+  return[Math.round(r/n),Math.round(g/n),Math.round(b/n)];
 }
-
-function colorDistance(rgb1, rgb2) {
-  const dr = rgb1[0]-rgb2[0], dg = rgb1[1]-rgb2[1], db = rgb1[2]-rgb2[2];
-  const rmean = (rgb1[0]+rgb2[0])/2;
-  return Math.sqrt((2+rmean/256)*dr*dr + 4*dg*dg + (2+(255-rmean)/256)*db*db);
+function colorDist(a,b){
+  const dr=a[0]-b[0],dg=a[1]-b[1],db=a[2]-b[2],rm=(a[0]+b[0])/2;
+  return Math.sqrt((2+rm/256)*dr*dr+4*dg*dg+(2+(255-rm)/256)*db*db);
 }
-
-function findClosestColor(rgb) {
-  let best = null, bestDist = Infinity;
-  for (const [key, val] of Object.entries(C)) {
-    const d = colorDistance(rgb, val.rgb);
-    if (d < bestDist) { bestDist = d; best = key; }
-  }
+function closestColor(rgb){
+  let best=null,bd=Infinity;
+  for(const[k,v]of Object.entries(C)){const d=colorDist(rgb,v.rgb);if(d<bd){bd=d;best=k;}}
   return best;
 }
 
-const VERDICTS = {
-  lucky_strong: {
-    emoji: '🌟', title: 'เสื้อมงคลสุดๆ!', cls: 'lucky',
-    desc: (c, cats) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>วันนี้สีนี้เสริมดวง<b>${cats.join(', ')}</b>เลยนะ! ใส่แล้วรวยแน่นอน 💰✨`,
-  },
-  lucky_mild: {
-    emoji: '😊', title: 'เสื้อเสริมดวงนะ!', cls: 'lucky',
-    desc: (c, cats) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>เสริม${cats.join(', ')} ใส่ไปเลย อย่าลังเล! 🍀`,
-  },
-  unlucky: {
-    emoji: '💀', title: 'เสื้อกาลกิณี!!! เปลี่ยนด่วน!', cls: 'unlucky',
-    desc: (c) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>วันนี้สีนี้กาลกิณีมากๆ ถอดออกเลย!!! รีบเปลี่ยนก่อนออกจากบ้าน 😱🚨`,
-  },
-  both: {
-    emoji: '🤔', title: 'ดีก็ได้ ร้ายก็มี...', cls: 'neutral',
-    desc: (c, cats) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>เสริม${cats.join(', ')} แต่ก็กาลกิณีด้วย... ลุ้นเอาเองนะ 🎲`,
-  },
-  neutral: {
-    emoji: '😐', title: 'สีกลางๆ...', cls: 'neutral',
-    desc: (c) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>วันนี้สีนี้ไม่ได้เสริมดวงแต่ก็ไม่กาลกิณี ถือว่าใส่ได้อยู่ 🙂`,
-  }
+const VERDICTS={
+  lucky_strong:{emoji:'🌟',title:'เสื้อมงคลสุดๆ!',cls:'lucky',
+    desc:(c,cats)=>`สีที่ตรวจพบ: <b>${C[c].th}</b><br>เสริมดวง<b>${cats.join(', ')}</b> ใส่แล้วรวยแน่นอน 💰✨`},
+  lucky_mild:{emoji:'😊',title:'เสื้อเสริมดวงนะ!',cls:'lucky',
+    desc:(c,cats)=>`สีที่ตรวจพบ: <b>${C[c].th}</b><br>เสริม${cats.join(', ')} ใส่ไปเลย! 🍀`},
+  unlucky:{emoji:'💀',title:'เสื้อกาลกิณี!!! เปลี่ยนด่วน!',cls:'unlucky',
+    desc:(c)=>`สีที่ตรวจพบ: <b>${C[c].th}</b><br>กาลกิณีมากๆ ถอดออกเลย!!! 😱🚨`},
+  both:{emoji:'🤔',title:'ดีก็ได้ ร้ายก็มี...',cls:'neutral',
+    desc:(c,cats)=>`สีที่ตรวจพบ: <b>${C[c].th}</b><br>เสริม${cats.join(', ')} แต่ก็กาลกิณีด้วย... ลุ้นเอาเองนะ 🎲`},
+  neutral:{emoji:'😐',title:'สีกลางๆ...',cls:'neutral',
+    desc:(c)=>`สีที่ตรวจพบ: <b>${C[c].th}</b><br>ไม่เสริมดวง ไม่กาลกิณี ใส่ได้อยู่ 🙂`},
 };
 
-function showResult(rgb) {
-  const colorKey = findClosestColor(rgb);
-  const dayIdx = DAYS.findIndex(d => d.jsDay === selectedDay);
-  const { lucky, unlucky } = getAllColors(dayIdx);
-  const luckyCategories = getLuckyCategories(dayIdx, colorKey);
-  const isLucky = lucky.has(colorKey);
-  const isBad = unlucky.has(colorKey);
-
-  let verdict;
-  if (isLucky && isBad) verdict = VERDICTS.both;
-  else if (isBad) verdict = VERDICTS.unlucky;
-  else if (isLucky && luckyCategories.length >= 3) verdict = VERDICTS.lucky_strong;
-  else if (isLucky) verdict = VERDICTS.lucky_mild;
-  else verdict = VERDICTS.neutral;
-
-  const panel = document.getElementById('result-panel');
-  panel.className = verdict.cls;
-  panel.style.display = 'block';
-
-  document.getElementById('colorSwatch').style.background = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
-  document.getElementById('resultEmoji').textContent = verdict.emoji;
-  document.getElementById('colorNameTh').textContent = `สีที่สแกนได้: ${C[colorKey].th}`;
-  document.getElementById('resultTitle').textContent = verdict.title;
-  document.getElementById('resultDesc').innerHTML = verdict.desc(colorKey, luckyCategories);
-
-  const catContainer = document.getElementById('categories');
-  catContainer.innerHTML = '';
-  luckyCategories.forEach(cat => {
-    const tag = document.createElement('span');
-    tag.className = 'cat-tag good';
-    tag.textContent = '✅ ' + cat;
-    catContainer.appendChild(tag);
-  });
-  if (isBad) {
-    const tag = document.createElement('span');
-    tag.className = 'cat-tag bad';
-    tag.textContent = '⛔ กาลกิณี';
-    catContainer.appendChild(tag);
-  }
-
-  panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+function showResult(rgb){
+  const k=closestColor(rgb);
+  const di=DAYS.findIndex(d=>d.jsDay===selectedDay);
+  const{lucky,unlucky}=getAllColors(di);
+  const cats=getLuckyCategories(di,k);
+  const isL=lucky.has(k),isB=unlucky.has(k);
+  const v=isL&&isB?VERDICTS.both:isB?VERDICTS.unlucky:isL&&cats.length>=3?VERDICTS.lucky_strong:isL?VERDICTS.lucky_mild:VERDICTS.neutral;
+  const panel=document.getElementById('result-panel');
+  panel.className=v.cls; panel.style.display='block';
+  document.getElementById('colorSwatch').style.background=`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+  document.getElementById('resultEmoji').textContent=v.emoji;
+  document.getElementById('colorNameTh').textContent=`สีที่สแกนได้: ${C[k].th}`;
+  document.getElementById('resultTitle').textContent=v.title;
+  document.getElementById('resultDesc').innerHTML=v.desc(k,cats);
+  const cc=document.getElementById('categories'); cc.innerHTML='';
+  cats.forEach(cat=>{const t=document.createElement('span');t.className='cat-tag good';t.textContent='✅ '+cat;cc.appendChild(t);});
+  if(isB){const t=document.createElement('span');t.className='cat-tag bad';t.textContent='⛔ กาลกิณี';cc.appendChild(t);}
+  panel.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
-function retry() {
-  document.getElementById('result-panel').style.display = 'none';
-}
+function retry(){ document.getElementById('result-panel').style.display='none'; }
 </script>
 </body>
 </html>

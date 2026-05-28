@@ -458,20 +458,30 @@ buildDaySelector();
 let stream = null;
 
 async function startCamera() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
   try {
+    // Force front camera with exact constraint
     stream = await navigator.mediaDevices.getUserMedia({
-      // video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } }
-      // video: { facingMode: { exact: 'user' }, width: { ideal: 720 }, height: { ideal: 960 } }
-      video: { facingMode: 'user' }
+      video: { facingMode: { exact: 'user' } }
     });
-    const video = document.getElementById('video');
-    video.srcObject = stream;
-    document.getElementById('camera-placeholder').style.display = 'none';
-    document.getElementById('cameraContainer').style.display = 'block';
-    document.getElementById('result-panel').style.display = 'none';
-  } catch (e) {
-    alert('ไม่สามารถเปิดกล้องได้ 😢\n' + e.message);
+  } catch (e1) {
+    try {
+      // Fallback: pick first video device (usually front on mobile)
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const front = devices.filter(d => d.kind === 'videoinput')[0];
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: front ? { deviceId: { exact: front.deviceId } } : true
+      });
+    } catch (e2) {
+      alert('ไม่สามารถเปิดกล้องได้ 😢\n' + e2.message);
+      return;
+    }
   }
+  const video = document.getElementById('video');
+  video.srcObject = stream;
+  document.getElementById('camera-placeholder').style.display = 'none';
+  document.getElementById('cameraContainer').style.display = 'block';
+  document.getElementById('result-panel').style.display = 'none';
 }
 
 function captureAndAnalyze() {

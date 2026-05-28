@@ -3,613 +3,165 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>เช็คดวงเสื้อ 2569 🔮</title>
+<title>เช็คดวงเสื้อ 2569</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sarabun',sans-serif;background:#fff8e7;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px;background-image:radial-gradient(circle at 20% 20%,#ffe0f0 0%,transparent 50%),radial-gradient(circle at 80% 80%,#fff0c0 0%,transparent 50%)}
+h1{font-size:2rem;font-weight:800;text-align:center;background:linear-gradient(135deg,#ff8c42,#ff6b9d,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
+.sub{font-size:1rem;color:#888;margin-bottom:20px;text-align:center}
+.days{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+.day{padding:8px 16px;border-radius:999px;border:2px solid #ddd;background:white;font-family:'Sarabun',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;color:#555}
+.day.on{background:#ff6b9d;border-color:#ff6b9d;color:white;transform:scale(1.05);box-shadow:0 4px 12px rgba(255,107,157,.4)}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* placeholder */
+#ph{width:100%;max-width:380px;aspect-ratio:3/4;background:linear-gradient(135deg,#f8e1f4,#fff0c0);border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;border:3px dashed #f0a0c0;font-size:5rem}
+.startbtn{padding:14px 32px;background:linear-gradient(135deg,#ff6b9d,#a855f7);color:white;border:none;border-radius:999px;font-family:'Sarabun',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(168,85,247,.4);transition:transform .2s;margin-top:12px}
+.startbtn:hover{transform:scale(1.04)}
 
-  :root {
-    --pink: #ff6b9d;
-    --yellow: #ffd93d;
-    --purple: #a855f7;
-    --orange: #ff8c42;
-    --bg: #fff8e7;
-  }
+/* camera area */
+#cambox{display:none;width:100%;max-width:380px;flex-direction:column;align-items:center;gap:10px}
+#camframe{position:relative;width:100%;border-radius:24px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.15);background:#111;aspect-ratio:3/4}
+#vid{width:100%;height:100%;object-fit:cover;display:block}
+#canvas{display:none}
+.scanbox{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;border:3px dashed rgba(255,255,255,.7);border-radius:16px;pointer-events:none;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}}
+.scanlabel{position:absolute;bottom:88px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:white;padding:6px 14px;border-radius:999px;font-size:.8rem;white-space:nowrap;pointer-events:none}
+.snapbtn{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;border:4px solid white;background:white;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);font-size:1.6rem;display:flex;align-items:center;justify-content:center;transition:transform .1s}
+.snapbtn:active{transform:translateX(-50%) scale(.9)}
+#loading{position:absolute;inset:0;background:rgba(0,0,0,.6);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:white;font-size:1rem;font-weight:700;border-radius:22px}
+.spin{width:40px;height:40px;border:4px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  body {
-    font-family: 'Sarabun', sans-serif;
-    background: var(--bg);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-image: radial-gradient(circle at 20% 20%, #ffe0f0 0%, transparent 50%),
-                      radial-gradient(circle at 80% 80%, #fff0c0 0%, transparent 50%);
-  }
+/* ปุ่มสลับกล้อง — อยู่นอก overflow:hidden */
+.swbtn{width:100%;max-width:380px;padding:10px;background:rgba(0,0,0,.08);border:2px solid rgba(0,0,0,.15);border-radius:999px;font-family:'Sarabun',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px;color:#444}
+.swbtn:active{background:rgba(0,0,0,.15)}
 
-  h1 {
-    font-size: 2rem;
-    font-weight: 800;
-    text-align: center;
-    background: linear-gradient(135deg, var(--orange), var(--pink), var(--purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 4px;
-    text-shadow: none;
-    filter: drop-shadow(0 2px 4px rgba(255,107,157,0.3));
-  }
-
-  .subtitle {
-    font-size: 1rem;
-    color: #888;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-
-  .day-selector {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-
-  .day-btn {
-    padding: 8px 16px;
-    border-radius: 999px;
-    border: 2px solid #ddd;
-    background: white;
-    font-family: 'Sarabun', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #555;
-  }
-
-  .day-btn.active {
-    background: var(--pink);
-    border-color: var(--pink);
-    color: white;
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(255,107,157,0.4);
-  }
-
-  .camera-container {
-    position: relative;
-    width: 100%;
-    max-width: 380px;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-    background: #222;
-    aspect-ratio: 3/4;
-  }
-
-  #video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  #canvas { display: none; }
-
-  .scan-overlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-
-  .scan-box {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 120px;
-    height: 120px;
-    border: 3px dashed rgba(255,255,255,0.7);
-    border-radius: 16px;
-    animation: pulse 1.5s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-  }
-
-  .scan-label {
-    position: absolute;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.6);
-    color: white;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    white-space: nowrap;
-  }
-
-  .capture-btn {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    border: 4px solid white;
-    background: white;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-    transition: transform 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.6rem;
-  }
-
-  .capture-btn:active { transform: translateX(-50%) scale(0.9); }
-
-  .start-btn {
-    padding: 14px 32px;
-    background: linear-gradient(135deg, var(--pink), var(--purple));
-    color: white;
-    border: none;
-    border-radius: 999px;
-    font-family: 'Sarabun', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(168,85,247,0.4);
-    transition: transform 0.2s;
-    margin-top: 12px;
-  }
-
-  .start-btn:hover { transform: scale(1.04); }
-
-  #result-panel {
-    display: none;
-    width: 100%;
-    max-width: 380px;
-    margin-top: 16px;
-    border-radius: 24px;
-    padding: 20px;
-    text-align: center;
-    animation: slideUp 0.4s ease;
-  }
-
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  #result-panel.lucky {
-    background: linear-gradient(135deg, #fff9c4, #fffde7);
-    border: 3px solid var(--yellow);
-    box-shadow: 0 8px 32px rgba(255,217,61,0.3);
-  }
-
-  #result-panel.unlucky {
-    background: linear-gradient(135deg, #fce4ec, #fff);
-    border: 3px solid #ef5350;
-    box-shadow: 0 8px 32px rgba(239,83,80,0.2);
-  }
-
-  #result-panel.neutral {
-    background: linear-gradient(135deg, #e8f5e9, #fff);
-    border: 3px solid #66bb6a;
-    box-shadow: 0 8px 32px rgba(102,187,106,0.2);
-  }
-
-  .color-swatch {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin: 0 auto 12px;
-    border: 4px solid white;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  }
-
-  .result-emoji { font-size: 2.5rem; display: block; margin-bottom: 6px; }
-
-  .result-title {
-    font-size: 1.5rem;
-    font-weight: 800;
-    margin-bottom: 6px;
-  }
-
-  .result-desc {
-    font-size: 0.95rem;
-    color: #555;
-    line-height: 1.5;
-    margin-bottom: 12px;
-  }
-
-  .color-name-th {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 4px;
-  }
-
-  .categories {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: center;
-    margin-top: 8px;
-  }
-
-  .cat-tag {
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 700;
-  }
-
-  .cat-tag.good { background: #e8f5e9; color: #2e7d32; border: 1.5px solid #a5d6a7; }
-  .cat-tag.bad  { background: #ffebee; color: #c62828; border: 1.5px solid #ef9a9a; }
-
-  .retry-btn {
-    margin-top: 14px;
-    padding: 10px 24px;
-    background: #f0f0f0;
-    border: none;
-    border-radius: 999px;
-    font-family: 'Sarabun', sans-serif;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: background 0.2s;
-    font-weight: 700;
-    color: #555;
-  }
-  .retry-btn:hover { background: #e0e0e0; }
-
-  #camera-placeholder {
-    width: 100%;
-    max-width: 380px;
-    aspect-ratio: 3/4;
-    background: linear-gradient(135deg, #f8e1f4, #fff0c0);
-    border-radius: 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    border: 3px dashed #f0a0c0;
-    font-size: 5rem;
-  }
-
-  .loading {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    color: white;
-    font-size: 1rem;
-    font-weight: 700;
-    border-radius: 22px;
-  }
-
-  .spinner {
-    width: 40px; height: 40px;
-    border: 4px solid rgba(255,255,255,0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* result */
+#result{display:none;width:100%;max-width:380px;margin-top:8px;border-radius:24px;padding:20px;text-align:center;animation:up .4s ease}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+#result.lucky{background:linear-gradient(135deg,#fff9c4,#fffde7);border:3px solid #ffd93d;box-shadow:0 8px 32px rgba(255,217,61,.3)}
+#result.bad{background:linear-gradient(135deg,#fce4ec,#fff);border:3px solid #ef5350;box-shadow:0 8px 32px rgba(239,83,80,.2)}
+#result.mid{background:linear-gradient(135deg,#e8f5e9,#fff);border:3px solid #66bb6a;box-shadow:0 8px 32px rgba(102,187,106,.2)}
+.swatch{width:80px;height:80px;border-radius:50%;margin:0 auto 12px;border:4px solid white;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.emoji{font-size:2.5rem;display:block;margin-bottom:6px}
+.rtitle{font-size:1.4rem;font-weight:800;margin-bottom:6px;color:#333}
+.rdesc{font-size:.95rem;color:#555;line-height:1.6;margin-bottom:12px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.tag{padding:4px 12px;border-radius:999px;font-size:.8rem;font-weight:700}
+.tag.g{background:#e8f5e9;color:#2e7d32;border:1.5px solid #a5d6a7}
+.tag.b{background:#ffebee;color:#c62828;border:1.5px solid #ef9a9a}
+.retry{margin-top:14px;padding:10px 24px;background:#f0f0f0;border:none;border-radius:999px;font-family:'Sarabun',sans-serif;font-size:.95rem;cursor:pointer;font-weight:700;color:#555;transition:background .2s}
+.retry:hover{background:#e0e0e0}
 </style>
 </head>
 <body>
-
 <h1>🔮 เช็คดวงเสื้อ 2569</h1>
-<p class="subtitle">ส่องเสื้อ รู้ดวง ไม่ต้องจำตาราง!</p>
+<p class="sub">ส่องเสื้อ รู้ดวง ไม่ต้องจำตาราง!</p>
+<div class="days" id="days"></div>
 
-<div class="day-selector" id="daySelector"></div>
-
-<div id="camera-placeholder">
+<div id="ph">
   <span>👗</span>
-  <button class="start-btn" onclick="startCamera()">📷 เปิดกล้องสแกนเสื้อ</button>
+  <button class="startbtn" id="startbtn">📷 เปิดกล้องสแกนเสื้อ</button>
 </div>
 
-<div class="camera-container" id="cameraContainer" style="display:none">
-  <video id="video" autoplay playsinline></video>
-  <canvas id="canvas"></canvas>
-  <div class="scan-overlay">
-    <div class="scan-box"></div>
-    <div class="scan-label">👕 ชี้กล้องที่เสื้อในกรอบ</div>
+<div id="cambox">
+  <div id="camframe">
+    <video id="vid" autoplay playsinline></video>
+    <canvas id="canvas"></canvas>
+    <div class="scanbox"></div>
+    <div class="scanlabel">👕 ชี้กล้องที่เสื้อในกรอบ</div>
+    <button class="snapbtn" id="snapbtn">📸</button>
+    <div id="loading"><div class="spin"></div><div>กำลังดูดวง...</div></div>
   </div>
-  <button class="capture-btn" onclick="captureAndAnalyze()" title="ถ่ายภาพ">📸</button>
-  <div id="loading" class="loading" style="display:none">
-    <div class="spinner"></div>
-    <div>กำลังดูดวง...</div>
-  </div>
+  <!-- ปุ่มสลับกล้องอยู่นอก camframe เลยไม่โดน overflow:hidden ตัด -->
+  <button class="swbtn" id="swbtn">🔄 สลับกล้อง</button>
 </div>
 
-<div id="result-panel">
-  <div class="color-swatch" id="colorSwatch"></div>
-  <span class="result-emoji" id="resultEmoji"></span>
-  <div class="color-name-th" id="colorNameTh"></div>
-  <div class="result-title" id="resultTitle"></div>
-  <div class="result-desc" id="resultDesc"></div>
-  <div class="categories" id="categories"></div>
-  <button class="retry-btn" onclick="retry()">🔄 ส่องใหม่อีกรอบ</button>
+<div id="result">
+  <div class="swatch" id="swatch"></div>
+  <span class="emoji" id="emoji"></span>
+  <div class="rtitle" id="rtitle"></div>
+  <div class="rdesc" id="rdesc"></div>
+  <div class="tags" id="tags"></div>
+  <button class="retry" id="retry">🔄 ส่องใหม่อีกรอบ</button>
 </div>
 
 <script>
-// ===== COLOR DATA TABLE =====
-// Days: จ=Mon, อ=Tue, พ=Wed, พฤ=Thu, ศ=Fri, ส=Sat, อา=Sun
-// Columns: การงาน(0), การเงิน(1), ความรัก(2), ผู้ใหญ่เมตตา(3), กาลกิณี(4)
+const DAYS=[{th:'จันทร์',s:'จ',j:1},{th:'อังคาร',s:'อ',j:2},{th:'พุธ',s:'พ',j:3},{th:'พฤหัสฯ',s:'พฤ',j:4},{th:'ศุกร์',s:'ศ',j:5},{th:'เสาร์',s:'ส',j:6},{th:'อาทิตย์',s:'อา',j:0}];
+const CATS=['การงาน','การเงิน','ความรัก','ผู้ใหญ่เมตตา'];
+const C={red:{r:[220,50,50],t:'แดง'},orange:{r:[230,120,50],t:'ส้ม'},yellow:{r:[240,210,50],t:'เหลือง'},green:{r:[50,160,90],t:'เขียว'},teal:{r:[30,170,160],t:'เขียวมรกต'},blue:{r:[60,120,220],t:'น้ำเงิน'},lightblue:{r:[100,190,230],t:'ฟ้า'},purple:{r:[140,70,200],t:'ม่วง'},pink:{r:[240,140,190],t:'ชมพู'},brown:{r:[130,80,40],t:'น้ำตาล'},black:{r:[30,30,30],t:'ดำ'},white:{r:[240,240,240],t:'ขาว'},gray:{r:[160,160,170],t:'เทา'}};
+const T={0:{0:['red','brown'],1:['purple','black'],2:['green'],3:['lightblue'],4:['red']},1:{0:['purple'],1:['orange','brown'],2:['purple','black'],3:['red'],4:['yellow','gray']},2:{0:['lightblue','blue'],1:['purple'],2:['red','orange'],3:['brown','pink'],4:['gray']},3:{0:['yellow'],1:['red'],2:['lightblue','teal'],3:['teal'],4:['black']},4:{0:['teal','pink'],1:['pink'],2:['yellow','gray'],3:['orange'],4:['purple']},5:{0:['red','lightblue'],1:['lightblue','blue'],2:['purple'],3:['purple'],4:['green']},6:{0:['purple','black'],1:['teal'],2:['purple'],3:['purple'],4:['lightblue','blue']}};
 
-const DAYS = [
-  { th: 'จันทร์', short: 'จ', jsDay: 1 },
-  { th: 'อังคาร', short: 'อ', jsDay: 2 },
-  { th: 'พุธ', short: 'พ', jsDay: 3 },
-  { th: 'พฤหัสฯ', short: 'พฤ', jsDay: 4 },
-  { th: 'ศุกร์', short: 'ศ', jsDay: 5 },
-  { th: 'เสาร์', short: 'ส', jsDay: 6 },
-  { th: 'อาทิตย์', short: 'อา', jsDay: 0 },
-];
+let selDay=new Date().getDay(), stream=null, facing='user';
 
-const CATEGORIES = ['การงาน', 'การเงิน', 'ความรัก', 'ผู้ใหญ่เมตตา', 'กาลกิณี'];
+// build day buttons
+const dc=document.getElementById('days');
+DAYS.forEach(d=>{
+  const b=document.createElement('button');
+  b.className='day'+(d.j===selDay?' on':'');
+  b.textContent=d.s; b.title=d.th;
+  b.onclick=()=>{selDay=d.j;document.querySelectorAll('.day').forEach(x=>x.classList.remove('on'));b.classList.add('on')};
+  dc.appendChild(b);
+});
 
-// Color data: [r, g, b, name_th, name_en]
-const C = {
-  red:       { rgb: [220,50,50],   th: 'แดง' },
-  orange:    { rgb: [230,120,50],  th: 'ส้ม' },
-  yellow:    { rgb: [240,210,50],  th: 'เหลือง' },
-  green:     { rgb: [50,160,90],   th: 'เขียว' },
-  teal:      { rgb: [30,170,160],  th: 'เขียวมรกต' },
-  blue:      { rgb: [60,120,220],  th: 'น้ำเงิน' },
-  lightblue: { rgb: [100,190,230], th: 'ฟ้า' },
-  purple:    { rgb: [140,70,200],  th: 'ม่วง' },
-  pink:      { rgb: [240,140,190], th: 'ชมพู' },
-  brown:     { rgb: [130,80,40],   th: 'น้ำตาล' },
-  black:     { rgb: [30,30,30],    th: 'ดำ' },
-  white:     { rgb: [240,240,240], th: 'ขาว' },
-  gray:      { rgb: [160,160,170], th: 'เทา' },
-  cream:     { rgb: [255,240,200], th: 'ครีม' },
+async function openCam(){
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
+  const tries=[{video:{facingMode:{exact:facing}}},{video:{facingMode:facing}},{video:true}];
+  for(const c of tries){try{stream=await navigator.mediaDevices.getUserMedia(c);break}catch(e){}}
+  if(!stream){alert('เปิดกล้องไม่ได้ 😢');return}
+  document.getElementById('vid').srcObject=stream;
+  document.getElementById('ph').style.display='none';
+  document.getElementById('cambox').style.display='flex';
+  document.getElementById('result').style.display='none';
+}
+
+document.getElementById('startbtn').onclick=()=>openCam();
+document.getElementById('swbtn').onclick=async()=>{facing=facing==='user'?'environment':'user';await openCam()};
+
+document.getElementById('snapbtn').onclick=()=>{
+  const vid=document.getElementById('vid'),cvs=document.getElementById('canvas'),ld=document.getElementById('loading');
+  cvs.width=vid.videoWidth;cvs.height=vid.videoHeight;
+  cvs.getContext('2d').drawImage(vid,0,0);
+  ld.style.display='flex';
+  setTimeout(()=>{
+    const cx=cvs.width/2,cy=cvs.height/2,sw=cvs.width*.3,sh=cvs.height*.3;
+    const d=cvs.getContext('2d').getImageData(cx-sw/2,cy-sh/2,sw,sh);
+    ld.style.display='none';
+    showResult(avgColor(d));
+  },1200);
 };
 
-// Table: day index 0-6, col index 0-4 (last = กาลกิณี)
-// Values from image analysis
-const TABLE = {
-  0: { // จันทร์
-    0: ['red','brown'], 1: ['purple','black'], 2: ['green','green'], 3: ['lightblue','lightblue'], 4: ['red']
-  },
-  1: { // อังคาร
-    0: ['purple'], 1: ['orange','brown'], 2: ['purple','black'], 3: ['red','red'], 4: ['yellow','gray']
-  },
-  2: { // พุธ
-    0: ['lightblue','blue'], 1: ['purple'], 2: ['red','orange'], 3: ['brown','pink'], 4: ['gray']
-  },
-  3: { // พฤหัสฯ
-    0: ['yellow'], 1: ['red'], 2: ['lightblue','teal'], 3: ['teal','teal'], 4: ['black']
-  },
-  4: { // ศุกร์
-    0: ['teal','pink'], 1: ['pink'], 2: ['yellow','gray'], 3: ['orange','orange'], 4: ['purple']
-  },
-  5: { // เสาร์
-    0: ['red','lightblue'], 1: ['lightblue','blue'], 2: ['purple'], 3: ['purple'], 4: ['green']
-  },
-  6: { // อาทิตย์
-    0: ['purple','black'], 1: ['teal'], 2: ['purple'], 3: ['purple','purple'], 4: ['lightblue','blue']
-  },
-};
+document.getElementById('retry').onclick=()=>{document.getElementById('result').style.display='none'};
 
-// Build color lookup
-function getAllColors(dayIdx) {
-  const row = TABLE[dayIdx];
-  const lucky = new Set();
-  const unlucky = new Set();
-  for (let col = 0; col < 5; col++) {
-    const colors = row[col] || [];
-    colors.forEach(c => {
-      if (col === 4) unlucky.add(c);
-      else lucky.add(c);
-    });
-  }
-  // Remove lucky if also unlucky? keep both for nuance
-  return { lucky, unlucky };
-}
+function avgColor(d){const p=d.data;let r=0,g=0,b=0,n=0;for(let i=0;i<p.length;i+=16){r+=p[i];g+=p[i+1];b+=p[i+2];n++}return[Math.round(r/n),Math.round(g/n),Math.round(b/n)]}
+function dist(a,b){const dr=a[0]-b[0],dg=a[1]-b[1],db=a[2]-b[2],rm=(a[0]+b[0])/2;return Math.sqrt((2+rm/256)*dr*dr+4*dg*dg+(2+(255-rm)/256)*db*db)}
+function nearest(rgb){let best=null,bd=1e9;for(const[k,v]of Object.entries(C)){const d=dist(rgb,v.r);if(d<bd){bd=d;best=k}}return best}
 
-function getLuckyCategories(dayIdx, colorKey) {
-  const row = TABLE[dayIdx];
-  const cats = [];
-  for (let col = 0; col < 4; col++) {
-    if ((row[col] || []).includes(colorKey)) cats.push(CATEGORIES[col]);
-  }
-  return cats;
-}
+function showResult(rgb){
+  const k=nearest(rgb),di=DAYS.findIndex(d=>d.j===selDay),row=T[di];
+  const lucky=new Set(),bad=new Set();
+  for(let c=0;c<5;c++)(row[c]||[]).forEach(x=>c===4?bad.add(x):lucky.add(x));
+  const cats=[];for(let c=0;c<4;c++)if((row[c]||[]).includes(k))cats.push(CATS[c]);
+  const isL=lucky.has(k),isB=bad.has(k);
 
-// ===== DAY SELECTOR =====
-let selectedDay = new Date().getDay(); // 0=Sun
+  let cls,em,ti,desc;
+  if(isB&&isL){cls='mid';em='🤔';ti='ดีก็ได้ ร้ายก็มี...';desc=`สีที่ตรวจพบ: <b>${C[k].t}</b><br>เสริม${cats.join(', ')} แต่ก็กาลกิณีด้วย ลุ้นเอาเองนะ 🎲`}
+  else if(isB){cls='bad';em='💀';ti='เสื้อกาลกิณี!!! เปลี่ยนด่วน!';desc=`สีที่ตรวจพบ: <b>${C[k].t}</b><br>วันนี้ห้ามใส่สีนี้เด็ดขาด ถอดออกเลย!!! 😱🚨`}
+  else if(isL&&cats.length>=3){cls='lucky';em='🌟';ti='เสื้อมงคลสุดๆ!';desc=`สีที่ตรวจพบ: <b>${C[k].t}</b><br>เสริมดวง<b>${cats.join(', ')}</b> ใส่แล้วรวยแน่! 💰✨`}
+  else if(isL){cls='lucky';em='😊';ti='เสื้อเสริมดวงนะ!';desc=`สีที่ตรวจพบ: <b>${C[k].t}</b><br>เสริม${cats.join(', ')} ใส่ไปเลย! 🍀`}
+  else{cls='mid';em='😐';ti='สีกลางๆ';desc=`สีที่ตรวจพบ: <b>${C[k].t}</b><br>ไม่เสริมดวง ไม่กาลกิณี ใส่ได้อยู่ 🙂`}
 
-function buildDaySelector() {
-  const container = document.getElementById('daySelector');
-  DAYS.forEach(d => {
-    const btn = document.createElement('button');
-    btn.className = 'day-btn' + (d.jsDay === selectedDay ? ' active' : '');
-    btn.textContent = d.short;
-    btn.title = d.th;
-    btn.onclick = () => {
-      selectedDay = d.jsDay;
-      document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    };
-    container.appendChild(btn);
-  });
-}
-
-buildDaySelector();
-
-// ===== CAMERA =====
-let stream = null;
-
-async function startCamera() {
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 720 }, height: { ideal: 960 } }
-    });
-    const video = document.getElementById('video');
-    video.srcObject = stream;
-    document.getElementById('camera-placeholder').style.display = 'none';
-    document.getElementById('cameraContainer').style.display = 'block';
-    document.getElementById('result-panel').style.display = 'none';
-  } catch (e) {
-    alert('ไม่สามารถเปิดกล้องได้ 😢\n' + e.message);
-  }
-}
-
-function captureAndAnalyze() {
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  const loading = document.getElementById('loading');
-
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0);
-
-  loading.style.display = 'flex';
-
-  // Sample center region (the scan box area ~1/3 of image center)
-  setTimeout(() => {
-    const cx = canvas.width / 2;
-    const cy = canvas.height / 2;
-    const sw = canvas.width * 0.3;
-    const sh = canvas.height * 0.3;
-    const imageData = ctx.getImageData(cx - sw/2, cy - sh/2, sw, sh);
-    const avgColor = getAverageColor(imageData);
-
-    loading.style.display = 'none';
-    showResult(avgColor);
-  }, 1200);
-}
-
-function getAverageColor(imageData) {
-  const d = imageData.data;
-  let r = 0, g = 0, b = 0, count = 0;
-  for (let i = 0; i < d.length; i += 16) { // sample every 4th pixel
-    r += d[i]; g += d[i+1]; b += d[i+2]; count++;
-  }
-  return [Math.round(r/count), Math.round(g/count), Math.round(b/count)];
-}
-
-// ===== COLOR MATCHING =====
-function colorDistance(rgb1, rgb2) {
-  // Weighted Euclidean (human perception)
-  const dr = rgb1[0] - rgb2[0];
-  const dg = rgb1[1] - rgb2[1];
-  const db = rgb1[2] - rgb2[2];
-  const rmean = (rgb1[0] + rgb2[0]) / 2;
-  return Math.sqrt((2 + rmean/256)*dr*dr + 4*dg*dg + (2 + (255-rmean)/256)*db*db);
-}
-
-function findClosestColor(rgb) {
-  let best = null, bestDist = Infinity;
-  for (const [key, val] of Object.entries(C)) {
-    const d = colorDistance(rgb, val.rgb);
-    if (d < bestDist) { bestDist = d; best = key; }
-  }
-  return best;
-}
-
-// ===== RESULT DISPLAY =====
-const VERDICTS = {
-  lucky_strong: {
-    emoji: '🌟',
-    title: 'เสื้อมงคลสุดๆ!',
-    desc: (c, cats) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>วันนี้สีนี้เสริมดวง<b>${cats.join(', ')}</b>เลยนะ! ใส่แล้วรวยแน่นอน 💰✨`,
-    cls: 'lucky'
-  },
-  lucky_mild: {
-    emoji: '😊',
-    title: 'เสื้อเสริมดวงนะ!',
-    desc: (c, cats) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>เสริม${cats.join(', ')} ใส่ไปเลย อย่าลังเล! 🍀`,
-    cls: 'lucky'
-  },
-  unlucky: {
-    emoji: '💀',
-    title: 'เสื้อกาลกิณี!!! เปลี่ยนด่วน!',
-    desc: (c, cats) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>วันนี้สีนี้กาลกิณีมากๆ ถอดออกเลย!!! รีบเปลี่ยนก่อนออกจากบ้าน 😱🚨`,
-    cls: 'unlucky'
-  },
-  both: {
-    emoji: '🤔',
-    title: 'ดีก็ได้ ร้ายก็มี...',
-    desc: (c, cats) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>เสริม${cats.join(', ')} แต่ก็กาลกิณีด้วย... ลุ้นเอาเองนะ 🎲`,
-    cls: 'neutral'
-  },
-  neutral: {
-    emoji: '😐',
-    title: 'สีกลางๆ...',
-    desc: (c) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>วันนี้สีนี้ไม่ได้เสริมดวงแต่ก็ไม่กาลกิณี ถือว่าใส่ได้อยู่ 🙂`,
-    cls: 'neutral'
-  }
-};
-
-function showResult(rgb) {
-  const colorKey = findClosestColor(rgb);
-  const dayIdx = DAYS.findIndex(d => d.jsDay === selectedDay);
-  const { lucky, unlucky } = getAllColors(dayIdx);
-  const luckyCategories = getLuckyCategories(dayIdx, colorKey);
-  const isLucky = lucky.has(colorKey);
-  const isBad = unlucky.has(colorKey);
-
-  let verdict;
-  if (isLucky && isBad) verdict = VERDICTS.both;
-  else if (isBad) verdict = VERDICTS.unlucky;
-  else if (isLucky && luckyCategories.length >= 3) verdict = VERDICTS.lucky_strong;
-  else if (isLucky) verdict = VERDICTS.lucky_mild;
-  else verdict = VERDICTS.neutral;
-
-  // Update UI
-  const panel = document.getElementById('result-panel');
-  panel.className = ''; // reset
-  panel.style.display = 'block';
-  panel.className = verdict.cls;
-
-  document.getElementById('colorSwatch').style.background = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
-  document.getElementById('resultEmoji').textContent = verdict.emoji;
-  document.getElementById('colorNameTh').textContent = `สีที่สแกนได้: ${C[colorKey].th}`;
-  document.getElementById('resultTitle').textContent = verdict.title;
-  document.getElementById('resultDesc').innerHTML = typeof verdict.desc === 'function'
-    ? verdict.desc(colorKey, luckyCategories)
-    : verdict.desc;
-
-  // Category tags
-  const catContainer = document.getElementById('categories');
-  catContainer.innerHTML = '';
-  luckyCategories.forEach(cat => {
-    const tag = document.createElement('span');
-    tag.className = 'cat-tag good';
-    tag.textContent = '✅ ' + cat;
-    catContainer.appendChild(tag);
-  });
-  if (isBad) {
-    const tag = document.createElement('span');
-    tag.className = 'cat-tag bad';
-    tag.textContent = '⛔ กาลกิณี';
-    catContainer.appendChild(tag);
-  }
-
-  panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-function retry() {
-  document.getElementById('result-panel').style.display = 'none';
+  const panel=document.getElementById('result');
+  panel.className=cls;panel.style.display='block';
+  document.getElementById('swatch').style.background=`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+  document.getElementById('emoji').textContent=em;
+  document.getElementById('rtitle').textContent=ti;
+  document.getElementById('rdesc').innerHTML=desc;
+  const tc=document.getElementById('tags');tc.innerHTML='';
+  cats.forEach(c=>{const t=document.createElement('span');t.className='tag g';t.textContent='✅ '+c;tc.appendChild(t)});
+  if(isB){const t=document.createElement('span');t.className='tag b';t.textContent='⛔ กาลกิณี';tc.appendChild(t)}
+  panel.scrollIntoView({behavior:'smooth',block:'center'});
 }
 </script>
 </body>

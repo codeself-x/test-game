@@ -38,7 +38,6 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin-bottom: 4px;
-    text-shadow: none;
     filter: drop-shadow(0 2px 4px rgba(255,107,157,0.3));
   }
 
@@ -123,7 +122,7 @@
 
   .scan-label {
     position: absolute;
-    bottom: 80px;
+    bottom: 96px;
     left: 50%;
     transform: translateX(-50%);
     background: rgba(0,0,0,0.6);
@@ -151,9 +150,32 @@
     align-items: center;
     justify-content: center;
     font-size: 1.6rem;
+    pointer-events: all;
   }
 
   .capture-btn:active { transform: translateX(-50%) scale(0.9); }
+
+  /* ปุ่มสลับกล้อง */
+  .switch-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    pointer-events: all;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .switch-btn:active { background: rgba(0,0,0,0.8); transform: scale(0.9); }
 
   .start-btn {
     padding: 14px 32px;
@@ -330,6 +352,7 @@
     <div class="scan-box"></div>
     <div class="scan-label">👕 ชี้กล้องที่เสื้อในกรอบ</div>
   </div>
+  <button class="switch-btn" onclick="switchCamera()" title="สลับกล้อง">🔄</button>
   <button class="capture-btn" onclick="captureAndAnalyze()" title="ถ่ายภาพ">📸</button>
   <div id="loading" class="loading" style="display:none">
     <div class="spinner"></div>
@@ -348,10 +371,6 @@
 </div>
 
 <script>
-// ===== COLOR DATA TABLE =====
-// Days: จ=Mon, อ=Tue, พ=Wed, พฤ=Thu, ศ=Fri, ส=Sat, อา=Sun
-// Columns: การงาน(0), การเงิน(1), ความรัก(2), ผู้ใหญ่เมตตา(3), กาลกิณี(4)
-
 const DAYS = [
   { th: 'จันทร์', short: 'จ', jsDay: 1 },
   { th: 'อังคาร', short: 'อ', jsDay: 2 },
@@ -364,7 +383,6 @@ const DAYS = [
 
 const CATEGORIES = ['การงาน', 'การเงิน', 'ความรัก', 'ผู้ใหญ่เมตตา', 'กาลกิณี'];
 
-// Color data: [r, g, b, name_th, name_en]
 const C = {
   red:       { rgb: [220,50,50],   th: 'แดง' },
   orange:    { rgb: [230,120,50],  th: 'ส้ม' },
@@ -382,45 +400,22 @@ const C = {
   cream:     { rgb: [255,240,200], th: 'ครีม' },
 };
 
-// Table: day index 0-6, col index 0-4 (last = กาลกิณี)
-// Values from image analysis
 const TABLE = {
-  0: { // จันทร์
-    0: ['red','brown'], 1: ['purple','black'], 2: ['green','green'], 3: ['lightblue','lightblue'], 4: ['red']
-  },
-  1: { // อังคาร
-    0: ['purple'], 1: ['orange','brown'], 2: ['purple','black'], 3: ['red','red'], 4: ['yellow','gray']
-  },
-  2: { // พุธ
-    0: ['lightblue','blue'], 1: ['purple'], 2: ['red','orange'], 3: ['brown','pink'], 4: ['gray']
-  },
-  3: { // พฤหัสฯ
-    0: ['yellow'], 1: ['red'], 2: ['lightblue','teal'], 3: ['teal','teal'], 4: ['black']
-  },
-  4: { // ศุกร์
-    0: ['teal','pink'], 1: ['pink'], 2: ['yellow','gray'], 3: ['orange','orange'], 4: ['purple']
-  },
-  5: { // เสาร์
-    0: ['red','lightblue'], 1: ['lightblue','blue'], 2: ['purple'], 3: ['purple'], 4: ['green']
-  },
-  6: { // อาทิตย์
-    0: ['purple','black'], 1: ['teal'], 2: ['purple'], 3: ['purple','purple'], 4: ['lightblue','blue']
-  },
+  0: { 0: ['red','brown'],       1: ['purple','black'], 2: ['green','green'],      3: ['lightblue','lightblue'], 4: ['red'] },
+  1: { 0: ['purple'],            1: ['orange','brown'], 2: ['purple','black'],     3: ['red','red'],             4: ['yellow','gray'] },
+  2: { 0: ['lightblue','blue'],  1: ['purple'],         2: ['red','orange'],       3: ['brown','pink'],          4: ['gray'] },
+  3: { 0: ['yellow'],            1: ['red'],            2: ['lightblue','teal'],   3: ['teal','teal'],           4: ['black'] },
+  4: { 0: ['teal','pink'],       1: ['pink'],           2: ['yellow','gray'],      3: ['orange','orange'],       4: ['purple'] },
+  5: { 0: ['red','lightblue'],   1: ['lightblue','blue'], 2: ['purple'],           3: ['purple'],                4: ['green'] },
+  6: { 0: ['purple','black'],    1: ['teal'],           2: ['purple'],             3: ['purple','purple'],       4: ['lightblue','blue'] },
 };
 
-// Build color lookup
 function getAllColors(dayIdx) {
   const row = TABLE[dayIdx];
-  const lucky = new Set();
-  const unlucky = new Set();
+  const lucky = new Set(), unlucky = new Set();
   for (let col = 0; col < 5; col++) {
-    const colors = row[col] || [];
-    colors.forEach(c => {
-      if (col === 4) unlucky.add(c);
-      else lucky.add(c);
-    });
+    (row[col] || []).forEach(c => col === 4 ? unlucky.add(c) : lucky.add(c));
   }
-  // Remove lucky if also unlucky? keep both for nuance
   return { lucky, unlucky };
 }
 
@@ -434,7 +429,7 @@ function getLuckyCategories(dayIdx, colorKey) {
 }
 
 // ===== DAY SELECTOR =====
-let selectedDay = new Date().getDay(); // 0=Sun
+let selectedDay = new Date().getDay();
 
 function buildDaySelector() {
   const container = document.getElementById('daySelector');
@@ -451,37 +446,47 @@ function buildDaySelector() {
     container.appendChild(btn);
   });
 }
-
 buildDaySelector();
 
 // ===== CAMERA =====
 let stream = null;
+let currentFacing = 'user';
 
-async function startCamera() {
+async function startCamera(facing) {
+  if (facing) currentFacing = facing;
   if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-  try {
-    // Force front camera with exact constraint
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { exact: 'user' } }
-    });
-  } catch (e1) {
+
+  const constraints = [
+    { video: { facingMode: { exact: currentFacing } } },
+    { video: { facingMode: currentFacing } },
+    { video: true },
+  ];
+
+  for (const c of constraints) {
     try {
-      // Fallback: pick first video device (usually front on mobile)
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const front = devices.filter(d => d.kind === 'videoinput')[0];
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: front ? { deviceId: { exact: front.deviceId } } : true
-      });
-    } catch (e2) {
-      alert('ไม่สามารถเปิดกล้องได้ 😢\n' + e2.message);
-      return;
-    }
+      stream = await navigator.mediaDevices.getUserMedia(c);
+      break;
+    } catch (e) { /* try next */ }
   }
+
+  if (!stream) {
+    alert('ไม่สามารถเปิดกล้องได้ 😢');
+    return;
+  }
+
   const video = document.getElementById('video');
   video.srcObject = stream;
   document.getElementById('camera-placeholder').style.display = 'none';
   document.getElementById('cameraContainer').style.display = 'block';
   document.getElementById('result-panel').style.display = 'none';
+}
+
+async function switchCamera() {
+  currentFacing = currentFacing === 'user' ? 'environment' : 'user';
+  const btn = document.querySelector('.switch-btn');
+  btn.style.transform = 'rotate(180deg)';
+  setTimeout(() => btn.style.transform = '', 300);
+  await startCamera(currentFacing);
 }
 
 function captureAndAnalyze() {
@@ -493,10 +498,8 @@ function captureAndAnalyze() {
   canvas.height = video.videoHeight;
   const ctx = canvas.getContext('2d');
   ctx.drawImage(video, 0, 0);
-
   loading.style.display = 'flex';
 
-  // Sample center region (the scan box area ~1/3 of image center)
   setTimeout(() => {
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
@@ -504,7 +507,6 @@ function captureAndAnalyze() {
     const sh = canvas.height * 0.3;
     const imageData = ctx.getImageData(cx - sw/2, cy - sh/2, sw, sh);
     const avgColor = getAverageColor(imageData);
-
     loading.style.display = 'none';
     showResult(avgColor);
   }, 1200);
@@ -513,20 +515,16 @@ function captureAndAnalyze() {
 function getAverageColor(imageData) {
   const d = imageData.data;
   let r = 0, g = 0, b = 0, count = 0;
-  for (let i = 0; i < d.length; i += 16) { // sample every 4th pixel
+  for (let i = 0; i < d.length; i += 16) {
     r += d[i]; g += d[i+1]; b += d[i+2]; count++;
   }
   return [Math.round(r/count), Math.round(g/count), Math.round(b/count)];
 }
 
-// ===== COLOR MATCHING =====
 function colorDistance(rgb1, rgb2) {
-  // Weighted Euclidean (human perception)
-  const dr = rgb1[0] - rgb2[0];
-  const dg = rgb1[1] - rgb2[1];
-  const db = rgb1[2] - rgb2[2];
-  const rmean = (rgb1[0] + rgb2[0]) / 2;
-  return Math.sqrt((2 + rmean/256)*dr*dr + 4*dg*dg + (2 + (255-rmean)/256)*db*db);
+  const dr = rgb1[0]-rgb2[0], dg = rgb1[1]-rgb2[1], db = rgb1[2]-rgb2[2];
+  const rmean = (rgb1[0]+rgb2[0])/2;
+  return Math.sqrt((2+rmean/256)*dr*dr + 4*dg*dg + (2+(255-rmean)/256)*db*db);
 }
 
 function findClosestColor(rgb) {
@@ -538,37 +536,26 @@ function findClosestColor(rgb) {
   return best;
 }
 
-// ===== RESULT DISPLAY =====
 const VERDICTS = {
   lucky_strong: {
-    emoji: '🌟',
-    title: 'เสื้อมงคลสุดๆ!',
+    emoji: '🌟', title: 'เสื้อมงคลสุดๆ!', cls: 'lucky',
     desc: (c, cats) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>วันนี้สีนี้เสริมดวง<b>${cats.join(', ')}</b>เลยนะ! ใส่แล้วรวยแน่นอน 💰✨`,
-    cls: 'lucky'
   },
   lucky_mild: {
-    emoji: '😊',
-    title: 'เสื้อเสริมดวงนะ!',
+    emoji: '😊', title: 'เสื้อเสริมดวงนะ!', cls: 'lucky',
     desc: (c, cats) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>เสริม${cats.join(', ')} ใส่ไปเลย อย่าลังเล! 🍀`,
-    cls: 'lucky'
   },
   unlucky: {
-    emoji: '💀',
-    title: 'เสื้อกาลกิณี!!! เปลี่ยนด่วน!',
-    desc: (c, cats) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>วันนี้สีนี้กาลกิณีมากๆ ถอดออกเลย!!! รีบเปลี่ยนก่อนออกจากบ้าน 😱🚨`,
-    cls: 'unlucky'
+    emoji: '💀', title: 'เสื้อกาลกิณี!!! เปลี่ยนด่วน!', cls: 'unlucky',
+    desc: (c) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>วันนี้สีนี้กาลกิณีมากๆ ถอดออกเลย!!! รีบเปลี่ยนก่อนออกจากบ้าน 😱🚨`,
   },
   both: {
-    emoji: '🤔',
-    title: 'ดีก็ได้ ร้ายก็มี...',
+    emoji: '🤔', title: 'ดีก็ได้ ร้ายก็มี...', cls: 'neutral',
     desc: (c, cats) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>เสริม${cats.join(', ')} แต่ก็กาลกิณีด้วย... ลุ้นเอาเองนะ 🎲`,
-    cls: 'neutral'
   },
   neutral: {
-    emoji: '😐',
-    title: 'สีกลางๆ...',
+    emoji: '😐', title: 'สีกลางๆ...', cls: 'neutral',
     desc: (c) => `สีที่ตรวจพบ: <b>${C[c].th}</b><br>วันนี้สีนี้ไม่ได้เสริมดวงแต่ก็ไม่กาลกิณี ถือว่าใส่ได้อยู่ 🙂`,
-    cls: 'neutral'
   }
 };
 
@@ -587,21 +574,16 @@ function showResult(rgb) {
   else if (isLucky) verdict = VERDICTS.lucky_mild;
   else verdict = VERDICTS.neutral;
 
-  // Update UI
   const panel = document.getElementById('result-panel');
-  panel.className = ''; // reset
-  panel.style.display = 'block';
   panel.className = verdict.cls;
+  panel.style.display = 'block';
 
   document.getElementById('colorSwatch').style.background = `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
   document.getElementById('resultEmoji').textContent = verdict.emoji;
   document.getElementById('colorNameTh').textContent = `สีที่สแกนได้: ${C[colorKey].th}`;
   document.getElementById('resultTitle').textContent = verdict.title;
-  document.getElementById('resultDesc').innerHTML = typeof verdict.desc === 'function'
-    ? verdict.desc(colorKey, luckyCategories)
-    : verdict.desc;
+  document.getElementById('resultDesc').innerHTML = verdict.desc(colorKey, luckyCategories);
 
-  // Category tags
   const catContainer = document.getElementById('categories');
   catContainer.innerHTML = '';
   luckyCategories.forEach(cat => {

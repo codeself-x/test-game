@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เช็คดวงเสื้อ 2569</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sarabun',sans-serif;background:#fff8e7;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px;background-image:radial-gradient(circle at 20% 20%,#ffe0f0 0%,transparent 50%),radial-gradient(circle at 80% 80%,#fff0c0 0%,transparent 50%)}
+h1{font-size:2rem;font-weight:800;text-align:center;background:linear-gradient(135deg,#ff8c42,#ff6b9d,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
+.sub{font-size:1rem;color:#888;margin-bottom:20px;text-align:center}
+.days{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+.day{padding:8px 16px;border-radius:999px;border:2px solid #ddd;background:white;font-family:'Sarabun',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;color:#555}
+.day.on{background:#ff6b9d;border-color:#ff6b9d;color:white;transform:scale(1.05);box-shadow:0 4px 12px rgba(255,107,157,.4)}
+
+/* placeholder */
+#ph{width:100%;max-width:380px;aspect-ratio:3/4;background:linear-gradient(135deg,#f8e1f4,#fff0c0);border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;border:3px dashed #f0a0c0;font-size:5rem}
+.startbtn{padding:14px 32px;background:linear-gradient(135deg,#ff6b9d,#a855f7);color:white;border:none;border-radius:999px;font-family:'Sarabun',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(168,85,247,.4);transition:transform .2s;margin-top:12px}
+.startbtn:hover{transform:scale(1.04)}
+
+/* camera area */
+#cambox{display:none;width:100%;max-width:380px;flex-direction:column;align-items:center;gap:10px}
+#camframe{position:relative;width:100%;border-radius:24px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.15);background:#111;aspect-ratio:3/4}
+#vid{width:100%;height:100%;object-fit:cover;display:block}
+#canvas{display:none}
+.scanbox{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;border:3px dashed rgba(255,255,255,.7);border-radius:16px;pointer-events:none;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}}
+.scanlabel{position:absolute;bottom:88px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:white;padding:6px 14px;border-radius:999px;font-size:.8rem;white-space:nowrap;pointer-events:none}
+.snapbtn{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;border:4px solid white;background:white;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.3);font-size:1.6rem;display:flex;align-items:center;justify-content:center;transition:transform .1s}
+.snapbtn:active{transform:translateX(-50%) scale(.9)}
+#loading{position:absolute;inset:0;background:rgba(0,0,0,.6);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:white;font-size:1rem;font-weight:700;border-radius:22px}
+.spin{width:40px;height:40px;border:4px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ปุ่มสลับกล้อง — อยู่นอก overflow:hidden */
+.swbtn{width:100%;max-width:380px;padding:10px;background:rgba(0,0,0,.08);border:2px solid rgba(0,0,0,.15);border-radius:999px;font-family:'Sarabun',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px;color:#444}
+.swbtn:active{background:rgba(0,0,0,.15)}
+
+/* result */
+#result{display:none;width:100%;max-width:380px;margin-top:8px;border-radius:24px;padding:20px;text-align:center;animation:up .4s ease}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+#result.lucky{background:linear-gradient(135deg,#fff9c4,#fffde7);border:3px solid #ffd93d;box-shadow:0 8px 32px rgba(255,217,61,.3)}
+#result.bad{background:linear-gradient(135deg,#fce4ec,#fff);border:3px solid #ef5350;box-shadow:0 8px 32px rgba(239,83,80,.2)}
+#result.mid{background:linear-gradient(135deg,#e8f5e9,#fff);border:3px solid #66bb6a;box-shadow:0 8px 32px rgba(102,187,106,.2)}
+.swatch{width:80px;height:80px;border-radius:50%;margin:0 auto 12px;border:4px solid white;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.emoji{font-size:2.5rem;display:block;margin-bottom:6px}
+.rtitle{font-size:1.4rem;font-weight:800;margin-bottom:6px;color:#333}
+.rdesc{font-size:.95rem;color:#555;line-height:1.6;margin-bottom:12px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.tag{padding:4px 12px;border-radius:999px;font-size:.8rem;font-weight:700}
+.tag.g{background:#e8f5e9;color:#2e7d32;border:1.5px solid #a5d6a7}
+.tag.b{background:#ffebee;color:#c62828;border:1.5px solid #ef9a9a}
+.retry{margin-top:14px;padding:10px 24px;background:#f0f0f0;border:none;border-radius:999px;font-family:'Sarabun',sans-serif;font-size:.95rem;cursor:pointer;font-weight:700;color:#555;transition:background .2s}
+.retry:hover{background:#e0e0e0}
+</style>
+</head>
+<body>
+<h1>🔮 เช็คดวงเสื้อ 2569</h1>
+<p class="sub">ส่องเสื้อ รู้ดวง ไม่ต้องจำตาราง!</p>
+<div class="days" id="days"></div>
+
+<div id="ph">
+  <span>👗</span>
+  <button class="startbtn" id="startbtn">📷 เปิดกล้องสแกนเสื้อ</button>
+</div>
+
+<div id="cambox">
+  <div id="camframe">
+    <video id="vid" autoplay playsinline></video>
+    <canvas id="canvas"></canvas>
+    <div class="scanbox"></div>
+    <div class="scanlabel">👕 ชี้กล้องที่เสื้อในกรอบ</div>
+    <button class="snapbtn" id="snapbtn">📸</button>
+    <div id="loading"><div class="spin"></div><div>กำลังดูดวง...</div></div>
+  </div>
+  <!-- ปุ่มสลับกล้องอยู่นอก camframe เลยไม่โดน overflow:hidden ตัด -->
+  <button class="swbtn" id="swbtn">🔄 สลับกล้อง</button>
+</div>
+
+<div id="result">
+  <div class="swatch" id="swatch"></div>
+  <span class="emoji" id="emoji"></span>
+  <div class="rtitle" id="rtitle"></div>
+  <div class="rdesc" id="rdesc"></div>
+  <div class="tags" id="tags"></div>
+  <button class="retry" id="retry">🔄 ส่องใหม่อีกรอบ</button>
+</div>
+
+<script>
+const DAYS=[{th:'จันทร์',s:'จ',j:1},{th:'อังคาร',s:'อ',j:2},{th:'พุธ',s:'พ',j:3},{th:'พฤหัสฯ',s:'พฤ',j:4},{th:'ศุกร์',s:'ศ',j:5},{th:'เสาร์',s:'ส',j:6},{th:'อาทิตย์',s:'อา',j:0}];
+const CATS=['การงาน','การเงิน','ความรัก','ผู้ใหญ่เมตตา'];
+const C={red:{r:[220,50,50],t:'แดง'},orange:{r:[230,120,50],t:'ส้ม'},yellow:{r:[240,210,50],t:'เหลือง'},green:{r:[50,160,90],t:'เขียว'},teal:{r:[30,170,160],t:'เขียวมรกต'},blue:{r:[60,120,220],t:'น้ำเงิน'},lightblue:{r:[100,190,230],t:'ฟ้า'},purple:{r:[140,70,200],t:'ม่วง'},pink:{r:[240,140,190],t:'ชมพู'},brown:{r:[130,80,40],t:'น้ำตาล'},black:{r:[30,30,30],t:'ดำ'},white:{r:[240,240,240],t:'ขาว'},gray:{r:[160,160,170],t:'เทา'}};
+const T={0:{0:['red','brown'],1:['purple','black'],2:['green'],3:['lightblue'],4:['red']},1:{0:['purple'],1:['orange','brown'],2:['purple','black'],3:['red'],4:['yellow','gray']},2:{0:['lightblue','blue'],1:['purple'],2:['red','orange'],3:['brown','pink'],4:['gray']},3:{0:['yellow'],1:['red'],2:['lightblue','teal'],3:['teal'],4:['black']},4:{0:['teal','pink'],1:['pink'],2:['yellow','gray'],3:['orange'],4:['purple']},5:{0:['red','lightblue'],1:['lightblue','blue'],2:['purple'],3:['purple'],4:['green']},6:{0:['purple','black'],1:['teal'],2:['purple'],3:['purple'],4:['lightblue','blue']}};
+
+let selDay=new Date().getDay(), stream=null, facing='user';
+
+// build day buttons
+const dc=document.getElementById('days');
+DAYS.forEach(d=>{
+  const b=document.createElement('button');
+  b.className='day'+(d.j===selDay?' on':'');
+  b.textContent=d.s; b.title=d.th;
+  b.onclick=()=>{selDay=d.j;document.querySelectorAll('.day').forEach(x=>x.classList.remove('on'));b.classList.add('on')};
+  dc.appendChild(b);
+});
+
+async function openCam(){
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}
+  const tries=[{video:{facingMode:{exact:facing}}},{video:{facingMode:facing}},{video:true}];
+  for(const c of tries){try{stream=await navigator.mediaDevices.getUserMedia(c);break}catch(e){}}
+  if(!stream){alert('เปิดกล้องไม่ได้ 😢');return}
+  document.getElementById('vid').srcObject=stream;
+  document.getElementById('ph').style.display='none';
+  document.getElementById('cambox').style.display='flex';
+  document.getElementById('result').style.display='none';
+}
+
+document.getElementById('startbtn').onclick=()=>openCam();
+document.getElementById('swbtn').onclick=async()=>{facing=facing==='user'?'environment':'user';await openCam()};
+
+document.getElementById('snapbtn').onclick=()=>{
+  const vid=document.getElementById('vid'),cvs=document.getElementById('canvas'),ld=document.getElementById('loading');
+  cvs.width=vid.videoWidth;cvs.height=vid.videoHeight;
+  cvs.getContext('2d').drawImage(vid,0,0);
+  ld.style.display='flex';
+  setTimeout(()=>{
+    const cx=cvs.width/2,cy=cvs.height/2,sw=cvs.width*.3,sh=cvs.height*.3;
+    const d=cvs.getContext('2d').getImageData(cx-sw/2,cy-sh/2,sw,sh);
+    ld.style.display='none';
+    showResult(avgColor(d));
+  },1200);
+};
+
+document.getElementById('retry').onclick=()=>{document.getElementById('result').style.display='none'};
+
+function avgColor(d){const p=d.data;let r=0,g=0,b=0,n=0;for(let i=0;i<p.length;i+=16){r+=p[i];g+=p[i+1];b+=p[i+2];n++}return[Math.round(r/n),Math.round(g/n),Math.round(b/n)]}
+function dist(a,b){const dr=a[0]-b[0],dg=a[1]-b[1],db=a[2]-b[2],rm=(a[0]+b[0])/2;return Math.sqrt((2+rm/256)*dr*dr+4*dg*dg+(2+(255-rm)/256)*db*db)}
+function nearest(rgb){let best=null,bd=1e9;for(const[k,v]of Object.entries(C)){const d=dist(rgb,v.r);if(d<bd){bd=d;best=k}}return best}
+
+function showResult(rgb){
+  const k=nearest(rgb),di=DAYS.findIndex(d=>d.j===selDay),row=T[di];
+  const lucky=new Set(),bad=new Set();
+  for(let c=0;c<5;c++)(row[c]||[]).forEach(x=>c===4?bad.add(x):lucky.add(x));
+  const cats=[];for(let c=0;c<4;c++)if((row[c]||[]).includes(k))cats.push(CATS[c]);
+  const isL=lucky.has(k),isB=bad.has(k);
+
+  let cls,em,ti,desc;
+  if(isB&&isL){cls='mid';em='🤔';ti='ดีก็ได้ ร้ายก็มี...';desc=`สีที่ตรวจพบ: <b>${C[k].t}</b><br>เสริม${cats.join(', ')} แต่ก็กาลกิณีด้วย ลุ้นเอาเองนะ 🎲`}
+  else if(isB){cls='bad';em='💀';ti='เสื้อกาลกิณี!!! เปลี่ยนด่วน!';desc=`สีที่ตรวจพบ: <b>${C[k].t}</b><br>วันนี้ห้ามใส่สีนี้เด็ดขาด ถอดออกเลย!!! 😱🚨`}
+  else if(isL&&cats.length>=3){cls='lucky';em='🌟';ti='เสื้อมงคลสุดๆ!';desc=`สีที่ตรวจพบ: <b>${C[k].t}</b><br>เสริมดวง<b>${cats.join(', ')}</b> ใส่แล้วรวยแน่! 💰✨`}
+  else if(isL){cls='lucky';em='😊';ti='เสื้อเสริมดวงนะ!';desc=`สีที่ตรวจพบ: <b>${C[k].t}</b><br>เสริม${cats.join(', ')} ใส่ไปเลย! 🍀`}
+  else{cls='mid';em='😐';ti='สีกลางๆ';desc=`สีที่ตรวจพบ: <b>${C[k].t}</b><br>ไม่เสริมดวง ไม่กาลกิณี ใส่ได้อยู่ 🙂`}
+
+  const panel=document.getElementById('result');
+  panel.className=cls;panel.style.display='block';
+  document.getElementById('swatch').style.background=`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+  document.getElementById('emoji').textContent=em;
+  document.getElementById('rtitle').textContent=ti;
+  document.getElementById('rdesc').innerHTML=desc;
+  const tc=document.getElementById('tags');tc.innerHTML='';
+  cats.forEach(c=>{const t=document.createElement('span');t.className='tag g';t.textContent='✅ '+c;tc.appendChild(t)});
+  if(isB){const t=document.createElement('span');t.className='tag b';t.textContent='⛔ กาลกิณี';tc.appendChild(t)}
+  panel.scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+</body>
+</html>
